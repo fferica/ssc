@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -6,6 +6,8 @@ from django.contrib.auth.forms import UserCreationForm
 from scaduti.models import Scaduto
 from inediti.models import Inedito
 from django.db.models import Q
+from django.contrib.auth.models import User
+
 
 def index_view(request):
     search_type = request.GET.get('search_type', 'inediti')
@@ -55,13 +57,19 @@ def index_view(request):
     })
 
 
-# Author and book detail pages
-def scheda_autore(request):
-    return render(request, 'core/scheda_autore.html')
 
+def scheda_libro_inedito(request, pk):
+    book = get_object_or_404(Inedito, pk=pk)
+    return render(request, 'core/scheda_libro.html', {'book': book, 'type': 'inedito'})
 
-def scheda_libro(request):
-    return render(request, 'core/scheda_libro.html')
+def scheda_libro_scaduto(request, pk):
+    book = get_object_or_404(Scaduto, pk=pk)
+    return render(request, 'core/scheda_libro.html', {'book': book, 'type': 'scaduto'})
+
+def scheda_autore(request, pk):
+    author = get_object_or_404(User, pk=pk)
+    return render(request, 'core/scheda_autore.html', {'author': author})
+
 
 
 # User profile
