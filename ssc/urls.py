@@ -5,6 +5,9 @@ from django.contrib.auth import views as auth_views
 from core import views as core_views
 from inediti import views as inediti_views
 from scaduti import views as scaduti_views
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('', core_views.index_view, name='index'),
@@ -20,3 +23,6 @@ urlpatterns = [
     path('add_inedito/', inediti_views.add_inedito, name='add_inedito'),
     path('add_scaduto/', scaduti_views.add_scaduto, name='add_scaduto'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,78 +1,150 @@
-/* Basic Reset */
+/* =============================================
+   RESET & BASE STYLES
+   ============================================= */
+
+/* Reset and box model normalization */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body Styling */
-/* styles.css */
-body {
-    background: url("static\images\background.jpg") no-repeat center center fixed;
-    background-size: cover;
-    font-family: Georgia, serif;
-    font-weight : normal;
-
+/* Base typography and adjustments */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
 }
 
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-image: url('../images/background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: #333;
+}
 
-/* Headings */
+/* =============================================
+   TYPOGRAPHY
+   ============================================= */
+
 h1, h2, h3, h4, h5, h6 {
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
   font-weight: normal;
   color: #222;
 }
 
-h1 { font-size: 2em; }
-h2 { font-size: 1.75em; }
-h3 { font-size: 1.5em; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.5rem; }
 
-/* Links */
+p {
+  margin-bottom: 1rem;
+}
+
+/* =============================================
+   LINKS & BUTTONS
+   ============================================= */
+
 a {
   color: #007BFF;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 a:hover {
   text-decoration: underline;
+  color: #0056b3;
 }
 
-/* Paragraphs */
-p {
-  margin-bottom: 1em;
-}
-
-/* Lists */
-ul, ol {
-  margin-bottom: 1em;
-  padding-left: 1.5em;
-}
-
-li {
-  margin-bottom: 0.5em;
-}
-
-/* Buttons */
 button, .btn {
   background-color: #007BFF;
   color: white;
   border: none;
-  padding: 0.5em 1em;
+  padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 button:hover, .btn:hover {
   background-color: #0056b3;
 }
 
-/* Forms */
+/* =============================================
+   LAYOUT & CONTAINERS
+   ============================================= */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.main-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* =============================================
+   NAVIGATION
+   ============================================= */
+
+nav a {
+  margin-right: 1rem;
+  text-decoration: none;
+  color: #007BFF;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* =============================================
+   MEDIA & IMAGES
+   ============================================= */
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1rem 0;
+}
+
+/* =============================================
+   LISTS
+   ============================================= */
+
+ul, ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+ul.unstyled {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+/* =============================================
+   FORMS
+   ============================================= */
+
 input, textarea, select {
   width: 100%;
-  padding: 0.5em;
-  margin-bottom: 1em;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  transition: border-color 0.2s ease;
 }
 
 input:focus, textarea:focus, select:focus {
@@ -80,16 +152,19 @@ input:focus, textarea:focus, select:focus {
   border-color: #007BFF;
 }
 
-/* Tables */
+/* =============================================
+   TABLES
+   ============================================= */
+
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
 }
 
 th, td {
   border: 1px solid #ccc;
-  padding: 0.5em;
+  padding: 0.5rem;
   text-align: left;
 }
 
@@ -97,59 +172,224 @@ th {
   background-color: #f2f2f2;
 }
 
-/* Containers */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1em;
-}
+/* =============================================
+   UTILITY CLASSES
+   ============================================= */
 
-/* Utility Classes */
 .text-center { text-align: center; }
-.mt-1 { margin-top: 1em; }
-.mb-1 { margin-bottom: 1em; }
-.p-1 { padding: 1em; }
+.mt-1 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 1rem; }
+.p-1 { padding: 1rem; }
 
+/* =============================================
+   FLEXBOX & GRID LAYOUTS
+   ============================================= */
 
-
-.container {
-    max-width: 800px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
+.flex-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
-nav a {
-    margin-right: 10px;
+@supports (display: grid) {
+  .grid-container {
+    display: grid;
+  }
+}
+
+/* =============================================
+   TRANSITIONS & ANIMATIONS
+   ============================================= */
+
+.transition-all {
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+/* =============================================
+   RESPONSIVE MEDIA QUERIES
+   ============================================= */
+
+@media (max-width: 768px) {
+  .flex-container {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+  
+  .main-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+}
+
+.btn {
+    display: inline-block;
+    background-color: #007BFF;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
     text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #007BFF;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* =============================================
+   NAVBAR STYLES
+   ============================================= */
+
+/* ======================
+   NAVBAR STYLES 
+   ====================== */
+
+.header {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.navbar-menu {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.navbar-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.navbar-link:hover {
     color: #007BFF;
 }
 
-nav a:hover {
-    text-decoration: underline;
+.navbar-button {
+    background: #007BFF;
+    color: white !important;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
 }
 
-.container {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
+.navbar-button:hover {
+    background: #0066cc;
 }
-img {
-    display: block;
-    margin-top: 10px;
+
+/* Mobile menu toggle (hidden by default) */
+.navbar-toggle {
+    display: none;
 }
-ul {
-    list-style-type: none;
-    padding-left: 0;
+
+.navbar-toggle-label {
+    display: none;
+    cursor: pointer;
 }
-li {
-    margin-bottom: 10px;
-}
-a {
-    color: #007bff;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
+
+/* ======================
+   MOBILE RESPONSIVE 
+   ====================== */
+
+@media (max-width: 768px) {
+    .navbar-toggle-label {
+        display: block;
+        width: 30px;
+        height: 20px;
+        position: relative;
+    }
+    
+    .navbar-toggle-label span {
+        display: block;
+        height: 2px;
+        width: 100%;
+        background: #333;
+        position: absolute;
+        left: 0;
+        transition: all 0.3s;
+    }
+    
+    .navbar-toggle-label span:nth-child(1) {
+        top: 0;
+    }
+    
+    .navbar-toggle-label span:nth-child(2) {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    
+    .navbar-toggle-label span:nth-child(3) {
+        bottom: 0;
+    }
+    
+    .navbar-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 0;
+        gap: 1rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+    
+    .navbar-toggle:checked ~ .navbar-menu {
+        max-height: 300px;
+        padding: 1rem 0;
+    }
+    
+    .navbar-toggle:checked + .navbar-toggle-label span:nth-child(1) {
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+    }
+    
+    .navbar-toggle:checked + .navbar-toggle-label span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .navbar-toggle:checked + .navbar-toggle-label span:nth-child(3) {
+        bottom: 50%;
+        transform: translateY(50%) rotate(-45deg);
+    }
 }

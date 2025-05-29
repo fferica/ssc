@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from .models import UserProfile
 from django.http import HttpResponseForbidden, HttpResponseNotFound
 
+
 def index_view(request):
     search_type = request.GET.get('search_type', 'inediti')
     query = request.GET.get('query', '')

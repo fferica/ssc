@@ -3,20 +3,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Site{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <nav>
-        <a href="{% url 'index' %}">Home</a>
-        {% if user.is_authenticated %}
-            <a href="{% url 'profilo' %}">Profile</a>
-        <a href="{% url 'user_logout' %}">Logout</a>
-        {% else %}
-        <a href="{% url 'user_login' %}">Login</a>
+    <header class="header">
+        <nav class="navbar">
+            <div class="navbar-container">
+                <a href="{% url 'index' %}" class="navbar-logo">MySite</a>
+                
+                <input type="checkbox" id="navbar-toggle" class="navbar-toggle">
+                <label for="navbar-toggle" class="navbar-toggle-label">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </label>
+                
+                <div class="navbar-menu">
+                    <a href="{% url 'index' %}" class="navbar-link">Home</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profilo' %}" class="navbar-link">Profile</a>
+                        <a href="{% url 'user_logout' %}" class="navbar-link">Logout</a>
+                    {% else %}
+                        <a href="{% url 'user_login' %}" class="navbar-link">Login</a>
+                        <a href="{% url 'register' %}" class="navbar-link navbar-button">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </header>
 
-        {% endif %}
-    </nav>
-    {% block content %}{% endblock %}
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
 </body>
 </html>

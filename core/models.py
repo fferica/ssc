@@ -17,14 +17,14 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s profilo"
-    
-    @receiver(post_save, sender=User)
-    def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            UserProfile.objects.create(user=instance)
 
-    @receiver(post_save, sender=User)
-    def save_user_profile(sender, instance, **kwargs):
-        if hasattr(instance, 'profilo'):
-            instance.profile.save()
+# 👇 Move signal handlers OUTSIDE the class 👇
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
 
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    if hasattr(instance, 'profilo'):
+        instance.profilo.save()
