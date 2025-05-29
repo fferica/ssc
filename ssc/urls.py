@@ -9,8 +9,7 @@ from scaduti import views as scaduti_views
 urlpatterns = [
     path('', core_views.index_view, name='index'),
     path('profile/', core_views.profile_view, name='profile'),
-    path('scheda_libro/inedito/<int:pk>/', core_views.scheda_libro_inedito, name='scheda_libro_inedito'),
-    path('scheda_libro/scaduto/<int:pk>/', core_views.scheda_libro_scaduto, name='scheda_libro_scaduto'),
+    path('scheda_libro/<str:type>/<int:pk>/', core_views.scheda_libro, name='scheda_libro'),
     path('scheda_autore/<int:pk>/', core_views.scheda_autore, name='scheda_autore'),
     path('sign_in/', core_views.sign_in, name='sign_in'),
     path('user_login/', core_views.user_login, name='user_login'),

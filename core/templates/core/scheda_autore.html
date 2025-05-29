@@ -1,1 +1,23 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Profilo Autore: {{ author.username }}</h1>
+    <p>Nome: {{ author.first_name }} {{ author.last_name }}</p>
+    <p>Email: {{ author.email }}</p>
+
+    <hr>
+    <h2>Libri Pubblicati</h2>
+    <ul>
+        {% for book in author.inedito_set.all %}
+            <li><a href="{% url 'scheda_libro' 'inedito' book.id %}">{{ book.titolo }}</a> (Inedito)</li>
+        {% endfor %}
+        {% for book in author.scaduto_set.all %}
+            <li><a href="{% url 'scheda_libro' 'scaduto' book.id %}">{{ book.titolo }}</a> (Scaduto)</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'index' %}">Torna alla Home</a>
+</div>
+{% endblock %}

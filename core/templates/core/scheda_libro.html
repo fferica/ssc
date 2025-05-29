@@ -1,1 +1,25 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ book.titolo }} ({{ type|capfirst }})</h1>
+    <p>Autore: <a href="{% url 'scheda_autore' book.autore.id %}">{{ book.autore.username }}</a></p>
+    <p>Trama: {{ book.trama }}</p>
+
+    {% if type == 'scaduto' %}
+    <p>Anno di pubblicazione: {{ book.anno_pubblicazione }}</p>
+    <p>Editore: {{ book.editore }}</p>
+    {% endif %}
+
+    <p>Genere: {{ book.get_genere_display }}</p>
+    <p>Numero pagine: {{ book.numero_pagine }}</p>
+
+    {% if book.cover %}
+    <img src="{{ book.cover.url }}" alt="Copertina di {{ book.titolo }}" style="width:200px;height:auto;">
+    {% endif %}
+
+    <hr>
+    <a href="{% url 'index' %}">Torna alla Home</a>
+</div>
+{% endblock %}

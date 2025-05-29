@@ -1,22 +1,32 @@
 {% extends 'core/base.html' %}
-
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Profile Page</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-    <div class="container">
-        <h1>Welcome, {{ user.username }}!</h1>
-        
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p><strong>First Name:</strong> {{ user.first_name }}</p>
-        <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-        
-        <a href="{% url 'logout' %}">Logout</a>
-    </div>
-</body>
-</html>
+
+{% block content %}
+<div class="container">
+    <h1>Profilo Utente: {{ user.username }}</h1>
+    <p>Nome: {{ user.first_name }} {{ user.last_name }}</p>
+    <p>Email: {{ user.email }}</p>
+
+    <hr>
+    <h2>I tuoi libri Inediti</h2>
+    <ul>
+        {% for book in user.inedito_set.all %}
+            <li><a href="{% url 'scheda_libro' 'inedito' book.id %}">{{ book.titolo }}</a></li>
+        {% empty %}
+            <li>Nessun inedito pubblicato.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>I tuoi libri Scaduti</h2>
+    <ul>
+        {% for book in user.scaduto_set.all %}
+            <li><a href="{% url 'scheda_libro' 'scaduto' book.id %}">{{ book.titolo }}</a></li>
+        {% empty %}
+            <li>Nessun scaduto pubblicato.</li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+    <a href="{% url 'index' %}">Torna alla Home</a>
+</div>
+{% endblock %}

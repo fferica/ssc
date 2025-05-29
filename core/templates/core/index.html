@@ -47,27 +47,15 @@
     <ul>
     {% for book in results %}
         <li>
-            <!-- Determine URL dynamically based on search_type -->
-            {% if search_type == 'inediti' %}
-                <a href="{% url 'scheda_libro_inedito' book.id %}">
-                    <strong>{{ book.titolo }}</strong>
+            <!-- Generate the URL dynamically -->
+            <a href="{% url 'scheda_libro' search_type book.id %}">
+                <strong>{{ book.titolo }}</strong>
+            </a>
+            <br>
+            {% if book.cover %}
+                <a href="{% url 'scheda_libro' search_type book.id %}">
+                    <img src="{{ book.cover.url }}" alt="Copertina di {{ book.titolo }}" style="width:100px;height:auto;">
                 </a>
-                <br>
-                {% if book.cover %}
-                    <a href="{% url 'scheda_libro_inedito' book.id %}">
-                        <img src="{{ book.cover.url }}" alt="Copertina di {{ book.titolo }}" style="width:100px;height:auto;">
-                    </a>
-                {% endif %}
-            {% elif search_type == 'scaduti' %}
-                <a href="{% url 'scheda_libro_scaduto' book.id %}">
-                    <strong>{{ book.titolo }}</strong>
-                </a>
-                <br>
-                {% if book.cover %}
-                    <a href="{% url 'scheda_libro_scaduto' book.id %}">
-                        <img src="{{ book.cover.url }}" alt="Copertina di {{ book.titolo }}" style="width:100px;height:auto;">
-                    </a>
-                {% endif %}
             {% endif %}
 
             <!-- Author -->
@@ -79,7 +67,7 @@
             <br>Genere: {{ book.get_genere_display }}
         </li>
     {% endfor %}
-</ul>
+    </ul>
 
     {% elif query %}
     <p>Nessun risultato trovato per "{{ query }}".</p>

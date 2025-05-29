@@ -58,13 +58,14 @@ def index_view(request):
 
 
 
-def scheda_libro_inedito(request, pk):
-    book = get_object_or_404(Inedito, pk=pk)
-    return render(request, 'core/scheda_libro.html', {'book': book, 'type': 'inedito'})
-
-def scheda_libro_scaduto(request, pk):
-    book = get_object_or_404(Scaduto, pk=pk)
-    return render(request, 'core/scheda_libro.html', {'book': book, 'type': 'scaduto'})
+def scheda_libro(request, type, pk):
+    if type == 'inedito':
+        book = get_object_or_404(Inedito, id=pk)
+    elif type == 'scaduto':
+        book = get_object_or_404(Scaduto, id=pk)
+    else:
+        return HttpResponseNotFound('Tipo non valido')
+    return render(request, 'core/scheda_libro.html', {'book': book})
 
 def scheda_autore(request, pk):
     author = get_object_or_404(User, pk=pk)

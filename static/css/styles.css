@@ -129,3 +129,27 @@ nav a {
 nav a:hover {
     text-decoration: underline;
 }
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+img {
+    display: block;
+    margin-top: 10px;
+}
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+li {
+    margin-bottom: 10px;
+}
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
