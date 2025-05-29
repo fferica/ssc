@@ -20,10 +20,7 @@
             <option value="inediti" {% if search_type == 'inediti' %}selected{% endif %}>Inediti</option>
             <option value="scaduti" {% if search_type == 'scaduti' %}selected{% endif %}>Scaduti</option>
         </select>
-
         <input type="text" name="query" placeholder="Titolo, trama o autore..." value="{{ query }}">
-
-        <!-- Genre Filtering -->
         <label for="genere">Genere:</label>
         <select name="genere" id="genere">
             <option value="">-- Qualsiasi --</option>
@@ -31,13 +28,10 @@
                 <option value="{{ code }}" {% if genere == code %}selected{% endif %}>{{ display }}</option>
             {% endfor %}
         </select>
-
-        <!-- Filters specific to Scaduti -->
         <div id="scaduti-filters" style="display: {% if search_type == 'scaduti' %}block{% else %}none{% endif %};">
             <input type="number" name="anno" placeholder="Anno di pubblicazione" value="{{ anno }}">
             <input type="text" name="editore" placeholder="Editore" value="{{ editore }}">
         </div>
-
         <button type="submit">Cerca</button>
     </form>
 
@@ -47,33 +41,24 @@
     <ul>
     {% for book in results %}
         <li>
-            <!-- Generate the URL dynamically -->
-            <a href="{% url 'scheda_libro' search_type book.id %}">
+            <a href="{% url 'scheda_libro' book.book_type book.id %}">
                 <strong>{{ book.titolo }}</strong>
             </a>
             <br>
             {% if book.cover %}
-                <a href="{% url 'scheda_libro' search_type book.id %}">
-                    <img src="{{ book.cover.url }}" alt="Copertina di {{ book.titolo }}" style="width:100px;height:auto;">
-                </a>
+                <img src="{{ book.cover.url }}" alt="Copertina di {{ book.titolo }}" style="width:100px;height:auto;">
             {% endif %}
-
-            <!-- Author -->
             <br>Autore: <a href="{% url 'scheda_autore' book.autore.id %}">{{ book.autore.username }}</a>
-
-            {% if search_type == 'scaduti' %}
+            {% if book.book_type == 'scaduto' %}
                 <br>Anno: {{ book.anno_pubblicazione }} | Editore: {{ book.editore }}
             {% endif %}
             <br>Genere: {{ book.get_genere_display }}
         </li>
     {% endfor %}
     </ul>
-
     {% elif query %}
     <p>Nessun risultato trovato per "{{ query }}".</p>
     {% endif %}
-
 </div>
-
 <script src="{% static 'js/search.js' %}"></script>
 {% endblock %}

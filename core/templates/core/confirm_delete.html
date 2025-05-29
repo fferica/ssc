@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Conferma Eliminazione</h2>
+<p>Sei sicuro di voler eliminare il libro "{{ book.titolo }}"?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Elimina</button>
+    <a href="{% url 'profile' %}">Annulla</a>
+</form>
+{% endblock %}

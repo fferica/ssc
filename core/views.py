@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 from scaduti.models import Scaduto
 from inediti.models import Inedito
 from django.db.models import Q
 from django.contrib.auth.models import User
-
+from .models import UserProfile
+from django.http import HttpResponseForbidden, HttpResponseNotFound
 
 def index_view(request):
     search_type = request.GET.get('search_type', 'inediti')
@@ -26,25 +27,31 @@ def index_view(request):
 
     if query or genere or anno or editore:
         if search_type == 'scaduti':
-            results = Scaduto.objects.filter(
+            scaduti_qs = Scaduto.objects.filter(
                 Q(titolo__icontains=query) |
                 Q(trama__icontains=query) |
                 Q(autore__username__icontains=query)
             )
             if anno:
-                results = results.filter(anno_pubblicazione=anno)
+                scaduti_qs = scaduti_qs.filter(anno_pubblicazione=anno)
             if editore:
-                results = results.filter(editore__icontains=editore)
+                scaduti_qs = scaduti_qs.filter(editore__icontains=editore)
             if genere:
-                results = results.filter(genere__icontains=genere)
+                scaduti_qs = scaduti_qs.filter(genere__icontains=genere)
+            for s in scaduti_qs:
+                s.book_type = 'scaduto'
+            results = list(scaduti_qs)
         else:  # inediti
-            results = Inedito.objects.filter(
+            inediti_qs = Inedito.objects.filter(
                 Q(titolo__icontains=query) |
                 Q(trama__icontains=query) |
                 Q(autore__username__icontains=query)
             )
             if genere:
-                results = results.filter(genere__icontains=genere)
+                inediti_qs = inediti_qs.filter(genere__icontains=genere)
+            for i in inediti_qs:
+                i.book_type = 'inedito'
+            results = list(inediti_qs)
 
     return render(request, 'core/index.html', {
         'results': results,
@@ -56,40 +63,52 @@ def index_view(request):
         'genre_choices': GENRE_CHOICES,
     })
 
-
+def get_singular_type(search_type):
+    mapping = {
+        'scaduti': 'scaduto',
+        'inediti': 'inedito'
+    }
+    return mapping.get(search_type, search_type)
 
 def scheda_libro(request, type, pk):
-    if type == 'inedito':
+    if type in ['inedito', 'inediti']:
         book = get_object_or_404(Inedito, id=pk)
-    elif type == 'scaduto':
+    elif type in ['scaduto', 'scaduti']:
         book = get_object_or_404(Scaduto, id=pk)
     else:
         return HttpResponseNotFound('Tipo non valido')
-    return render(request, 'core/scheda_libro.html', {'book': book})
+    return render(request, 'core/scheda_libro.html', {'book': book, 'type': type})
 
 def scheda_autore(request, pk):
     author = get_object_or_404(User, pk=pk)
     return render(request, 'core/scheda_autore.html', {'author': author})
 
-
-
-# User profile
 @login_required
 def profile_view(request):
-    return render(request, 'core/profilo.html')
-
+    inediti = Inedito.objects.filter(autore=request.user)
+    scaduti = Scaduto.objects.filter(autore=request.user)
+    return render(request, 'core/profilo.html', {'inediti': inediti, 'scaduti': scaduti})
 
 def sign_in(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)  # Effettua il login automatico
+            user = form.save(commit=False)
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email']
+            user.save()
+            gender = form.cleaned_data['gender']
+            already_published = form.cleaned_data['already_published']
+            profile = user.profile
+            profile.gender = gender
+            profile.already_published = already_published
+            profile.save()
+            login(request, user)
             return redirect('index')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'core/sign_in.html', {'form': form})
-
 
 def user_login(request):
     if request.method == 'POST':
@@ -98,22 +117,19 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('profile')  # Reindirizza alla pagina profilo
+            return redirect('profile')
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'core/user_login.html')
 
-
 def user_logout(request):
     logout(request)
-    return redirect('index')  # Redirect to home page
-
+    return redirect('index')
 
 def search_books(request):
     search_type = request.GET.get('search_type', 'inediti')
     query = request.GET.get('query', '')
     results = []
-
     if search_type == 'scaduti':
         anno = request.GET.get('anno')
         editore = request.GET.get('editore')
@@ -130,9 +146,24 @@ def search_books(request):
             Q(titolo__icontains=query) |
             Q(autore__username__icontains=query)
         )
-
-    return render(request, 'core/index.html', {  # fixed template path here
+    return render(request, 'core/index.html', {
         'results': results,
         'search_type': search_type,
         'query': query,
     })
+
+@login_required
+def delete_book(request, type, pk):
+    if type == 'inedito':
+        book = get_object_or_404(Inedito, id=pk)
+    elif type == 'scaduto':
+        book = get_object_or_404(Scaduto, id=pk)
+    else:
+        return HttpResponseNotFound('Tipo non valido')
+    if book.autore != request.user:
+        return HttpResponseForbidden('Non puoi eliminare questo libro.')
+    if request.method == 'POST':
+        book.delete()
+        messages.success(request, f'Libro "{book.titolo}" eliminato con successo.')
+        return redirect('profile')
+    return render(request, 'core/confirm_delete.html', {'book': book, 'type': type})
