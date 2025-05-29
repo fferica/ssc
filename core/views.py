@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomProfileForm
 from scaduti.models import Scaduto
 from inediti.models import Inedito
 from django.db.models import Q
@@ -63,6 +63,9 @@ def index_view(request):
         'genre_choices': GENRE_CHOICES,
     })
 
+def privacy_policy(request):
+    return render(request, 'core/privacy_policy.html')
+
 def get_singular_type(search_type):
     mapping = {
         'scaduti': 'scaduto',
@@ -85,9 +88,28 @@ def scheda_autore(request, pk):
 
 @login_required
 def profile_view(request):
-    inediti = Inedito.objects.filter(autore=request.user)
-    scaduti = Scaduto.objects.filter(autore=request.user)
-    return render(request, 'core/profilo.html', {'inediti': inediti, 'scaduti': scaduti})
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    
+    # Handle Profile Edit
+    if request.method == 'POST' and 'edit_profile' in request.POST:
+        form = CustomProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profilo')
+    else:
+        form = CustomProfileForm(instance=profile)
+    
+    # Handle Account Deletion
+    if request.method == 'POST' and 'delete_account' in request.POST:
+        request.user.delete()
+        return redirect('index')
+    
+    return render(request, 'core/profilo.html', {  
+        'form': form,
+        'profile': profile,
+})
+
 
 def sign_in(request):
     if request.method == 'POST':
@@ -100,10 +122,11 @@ def sign_in(request):
             user.save()
             gender = form.cleaned_data['gender']
             already_published = form.cleaned_data['already_published']
-            profile = user.profile
+            profile, created = UserProfile.objects.get_or_create(user=user)
             profile.gender = gender
             profile.already_published = already_published
             profile.save()
+
             login(request, user)
             return redirect('index')
     else:
@@ -117,7 +140,7 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('profile')
+            return redirect('profilo')
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'core/user_login.html')
@@ -165,5 +188,6 @@ def delete_book(request, type, pk):
     if request.method == 'POST':
         book.delete()
         messages.success(request, f'Libro "{book.titolo}" eliminato con successo.')
-        return redirect('profile')
+        return redirect('profilo')
     return render(request, 'core/confirm_delete.html', {'book': book, 'type': type})
+

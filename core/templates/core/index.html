@@ -5,7 +5,7 @@
 <div class="container">
     <h1>Welcome to My Site</h1>
     <p>This is the homepage.</p>
-    <a href="{% url 'profile' %}">View Your Profile</a>
+    <a href="{% url 'profilo' %}">View Your Profile</a>
 
     <a href="{% url 'add_scaduto' %}"><button>Aggiungi Scaduto</button></a>
     <a href="{% url 'add_inedito' %}"><button>Aggiungi Inedito</button></a>
@@ -60,5 +60,19 @@
     <p>Nessun risultato trovato per "{{ query }}".</p>
     {% endif %}
 </div>
+<!-- base.html -->
+{% if not request.COOKIES.accepted_cookies %}
+<div id="cookie-banner" style="position:fixed;bottom:0;width:100%;background:#eee;padding:10px;text-align:center;">
+    This site uses cookies for functionality and analytics. By continuing, you accept our <a href="{% url 'privacy_policy' %}">Privacy Policy</a>.
+    <button onclick="acceptCookies()">Accept</button>
+</div>
+<script>
+function acceptCookies() {
+    document.cookie = "accepted_cookies=true;path=/";
+    document.getElementById('cookie-banner').style.display = 'none';
+}
+</script>
+{% endif %}
+
 <script src="{% static 'js/search.js' %}"></script>
 {% endblock %}
