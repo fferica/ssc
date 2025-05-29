@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Welcome to My Site</h1>
+    <p>This is the homepage.</p>
+    <a href="{% url 'profile' %}">View Your Profile</a>
+
+    <a href="{% url 'add_scaduto' %}"><button>Aggiungi Scaduto</button></a>
+    <a href="{% url 'add_inedito' %}"><button>Aggiungi Inedito</button></a>
+
+    <hr>
+
+    <!-- Search Form -->
+    <h2>Cerca Libri</h2>
+    <form method="get" action="">
+        <label for="search_type">Tipo di libro:</label>
+        <select name="search_type" id="search_type">
+            <option value="inediti" {% if search_type == 'inediti' %}selected{% endif %}>Inediti</option>
+            <option value="scaduti" {% if search_type == 'scaduti' %}selected{% endif %}>Scaduti</option>
+        </select>
+
+        <input type="text" name="query" placeholder="Titolo, trama o autore..." value="{{ query }}">
+
+        <!-- Genre Filtering -->
+        <label for="genere">Genere:</label>
+        <select name="genere" id="genere">
+            <option value="">-- Qualsiasi --</option>
+            {% for code, display in genre_choices %}
+                <option value="{{ code }}" {% if genere == code %}selected{% endif %}>{{ display }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Filters specific to Scaduti -->
+        <div id="scaduti-filters" style="display: {% if search_type == 'scaduti' %}block{% else %}none{% endif %};">
+            <input type="number" name="anno" placeholder="Anno di pubblicazione" value="{{ anno }}">
+            <input type="text" name="editore" placeholder="Editore" value="{{ editore }}">
+        </div>
+
+        <button type="submit">Cerca</button>
+    </form>
+
+    {% if results %}
+    <hr>
+    <h3>Risultati per "{{ query }}" ({{ search_type|capfirst }})</h3>
+    <ul>
+        {% for book in results %}
+            <li>
+                <strong>{{ book.titolo }}</strong> - Autore: {{ book.autore.username }}
+                {% if search_type == 'scaduti' %}
+                    <br>Anno: {{ book.anno_pubblicazione }} | Editore: {{ book.editore }}
+                {% endif %}
+                <br>Genere: {{ book.get_genere_display }}
+            </li>
+        {% endfor %}
+    </ul>
+    {% elif query %}
+    <p>Nessun risultato trovato per "{{ query }}".</p>
+    {% endif %}
+
+</div>
+
+<!-- Load external JavaScript -->
+<script src="{% static 'js/search.js' %}"></script>
+{% endblock %}
